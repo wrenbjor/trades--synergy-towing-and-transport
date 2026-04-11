@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synergy Towing &amp; Transport | Towing in Philadelphia, PA</title>
+<meta name="description" content="Call (267) 570-7719 for 24-hour towing and roadside services in Philadelphia, PA. We provide flatbed towing, motorcycle towing, lockouts, jump starts, and more ">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --p:#DC2626;--pd:#9e1b1b;
+  --bg:#0a0a0a;--bg2:#111111;--bg3:#161616;
+  --w:#f0f0f0;--muted:#6b6b6b;--dim:#2a2a2a;
+  --metal:linear-gradient(135deg,#2a2a2a 0%,#1a1a1a 50%,#2a2a2a 100%);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--w);overflow-x:hidden}
+
+/* NAV */
+nav{
+  position:fixed;inset:0 0 auto 0;z-index:999;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:.9rem 2rem;
+  background:rgba(10,10,10,.98);backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--dim);
+}
+/* racing stripe in nav */
+nav::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent 0%,var(--p) 30%,var(--p) 70%,transparent 100%);
+}
+.nbrand{font-size:1rem;font-weight:900;color:var(--w);text-decoration:none;letter-spacing:.02em;text-transform:uppercase}
+.nbrand span{color:var(--p)}
+.nphone{
+  display:inline-flex;align-items:center;gap:.45rem;
+  background:var(--p);color:#fff;text-decoration:none;
+  padding:.5rem 1.3rem;font-weight:700;font-size:.875rem;
+  border-radius:3px;
+  transition:background .25s,transform .2s;
+}
+.nphone:hover{background:var(--pd);transform:translateY(-1px)}
+
+/* HERO */
+.hero{
+  min-height:100vh;
+  background:var(--bg);
+  display:flex;align-items:center;
+  position:relative;overflow:hidden;
+  padding:7rem 2rem 6rem;
+}
+/* Speed lines */
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    -15deg,
+    transparent,transparent 80px,
+    rgba(255,255,255,.015) 80px,rgba(255,255,255,.015) 82px
+  );
+  pointer-events:none;
+}
+/* bottom diagonal divider */
+.hero::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;height:80px;
+  background:var(--bg2);
+  clip-path:polygon(0 60%,100% 0%,100% 100%,0% 100%);
+}
+/* Racing stripe */
+.hero-stripe{
+  position:absolute;left:0;top:0;bottom:0;width:6px;
+  background:var(--p);
+}
+/* Glow behind heading */
+.hero-glow{
+  position:absolute;right:10%;top:50%;transform:translateY(-50%);
+  width:500px;height:500px;
+  background:radial-gradient(circle,rgba(220,38,38,.1) 0%,transparent 65%);
+  pointer-events:none;
+}
+.hero-wrap{position:relative;z-index:2;max-width:1100px;margin:0 auto;width:100%;padding-left:1.5rem}
+.badge{
+  display:inline-flex;align-items:center;gap:.45rem;
+  border-left:3px solid var(--p);padding-left:.75rem;
+  font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--p);margin-bottom:1.2rem;
+}
+.hero h1{
+  font-size:clamp(2.5rem,6.5vw,5.5rem);font-weight:900;
+  line-height:1;letter-spacing:-.04em;margin-bottom:1rem;
+  text-transform:uppercase;
+}
+.hero h1 em{
+  display:block;color:var(--p);font-style:normal;
+  font-size:.75em;letter-spacing:-.03em;
+}
+.hero-sub{
+  font-size:clamp(.9rem,1.8vw,1.1rem);color:var(--muted);
+  max-width:560px;line-height:1.65;margin-bottom:2.5rem;
+}
+.ctas{display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
+.btn-main{
+  display:inline-flex;align-items:center;gap:.55rem;
+  background:var(--p);color:#fff;text-decoration:none;
+  padding:.95rem 2rem;border-radius:3px;font-weight:800;font-size:1rem;
+  letter-spacing:.02em;text-transform:uppercase;
+  box-shadow:0 0 24px rgba(220,38,38,.3);
+  transition:background .25s,transform .2s,box-shadow .25s;
+}
+.btn-main:hover{background:var(--pd);transform:translateY(-2px);box-shadow:0 0 36px rgba(220,38,38,.5)}
+.btn-ghost{
+  display:inline-flex;align-items:center;gap:.55rem;
+  background:transparent;color:var(--w);text-decoration:none;
+  padding:.93rem 2rem;border-radius:3px;font-weight:700;font-size:1rem;
+  border:1px solid var(--dim);
+  letter-spacing:.02em;text-transform:uppercase;
+  transition:border-color .25s,color .25s;
+}
+.btn-ghost:hover{border-color:var(--p);color:var(--p)}
+.hero-specs{
+  display:flex;gap:2.5rem;flex-wrap:wrap;
+  margin-top:2.8rem;padding-top:2rem;
+  border-top:1px solid var(--dim);
+}
+.spec-val{font-size:2rem;font-weight:900;color:var(--p);line-height:1;letter-spacing:-.03em}
+.spec-lbl{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.12em;margin-top:.2rem}
+
+/* SERVICES */
+.services{background:var(--bg2);padding:5.5rem 2rem}
+.sec-hdr{text-align:center;margin-bottom:3rem}
+.sec-label{
+  display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--p);margin-bottom:.5rem;
+}
+.sec-hdr h2{
+  font-size:clamp(1.8rem,4vw,3rem);font-weight:900;
+  letter-spacing:-.02em;text-transform:uppercase;
+}
+.sec-hdr p{color:var(--muted);font-size:.95rem;max-width:520px;margin:.65rem auto 0;line-height:1.6}
+.svc-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:1.5rem;max-width:1100px;margin:0 auto;
+}
+.scard{
+  background:var(--bg3);border:1px solid var(--dim);
+  border-radius:4px;padding:2rem;
+  position:relative;overflow:hidden;
+  transition:transform .3s,border-color .3s;
+}
+.scard-stripe{
+  position:absolute;top:0;left:0;bottom:0;width:3px;
+  background:var(--p);transform:scaleY(0);transform-origin:bottom;transition:transform .3s;
+}
+.scard:hover{transform:translateY(-4px);border-color:rgba(220,38,38,.4)}
+.scard:hover .scard-stripe{transform:scaleY(1)}
+.scard-ico{
+  width:44px;height:44px;border-radius:4px;
+  background:rgba(220,38,38,.1);border:1px solid rgba(220,38,38,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.1rem;color:var(--p);margin-bottom:1.1rem;
+}
+.scard h3{font-size:.98rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+
+/* ABOUT */
+.about{background:var(--bg);padding:5.5rem 2rem;border-top:1px solid var(--dim)}
+.about-inner{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;
+}
+.about-copy .sec-label{display:block;text-align:left;margin-bottom:.5rem}
+.about-copy h2{
+  font-size:clamp(1.7rem,3.5vw,2.8rem);font-weight:900;
+  text-transform:uppercase;letter-spacing:-.02em;margin-bottom:1.3rem;
+}
+.about-copy p{color:var(--muted);line-height:1.8;font-size:.975rem;margin-bottom:1.4rem}
+.feature-list{display:flex;flex-direction:column;gap:.65rem}
+.fitem{display:flex;align-items:center;gap:.7rem;font-size:.9rem;color:var(--w)}
+.fitem i{color:var(--p);flex-shrink:0}
+.about-panel{
+  background:var(--bg3);border:1px solid var(--dim);
+  border-top:3px solid var(--p);
+  border-radius:4px;padding:2.5rem;text-align:center;
+}
+.big-ico{font-size:4.5rem;color:var(--p);display:block;margin-bottom:1.2rem}
+.about-panel h3{font-size:1.2rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.6rem}
+.about-panel p{color:var(--muted);font-size:.9rem;line-height:1.6;margin-bottom:1.6rem}
+
+/* TESTIMONIALS */
+.testimonials{background:var(--bg2);padding:5.5rem 2rem}
+.t-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));
+  gap:1.5rem;max-width:1100px;margin:0 auto;
+}
+.tcard{
+  background:var(--bg3);border:1px solid var(--dim);
+  border-radius:4px;padding:2rem;
+  transition:border-color .3s,transform .3s;
+}
+.tcard:hover{border-color:rgba(220,38,38,.4);transform:translateY(-3px)}
+.stars{color:#f59e0b;letter-spacing:2px;margin-bottom:.9rem;font-size:.9rem}
+.tcard p{color:var(--muted);line-height:1.7;font-size:.92rem;font-style:italic;margin-bottom:.9rem}
+.rname{font-size:.78rem;color:var(--p);font-weight:700}
+
+/* CTA */
+.cta-band{
+  background:var(--p);padding:5rem 2rem;text-align:center;
+  position:relative;overflow:hidden;
+  border-top:4px solid var(--pd);
+}
+.cta-band::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(-15deg,transparent,transparent 40px,rgba(0,0,0,.1) 40px,rgba(0,0,0,.1) 42px);
+}
+.cta-inner{position:relative;z-index:1}
+.cta-band h2{
+  font-size:clamp(2rem,5vw,3.5rem);font-weight:900;
+  text-transform:uppercase;letter-spacing:-.02em;margin-bottom:.9rem;
+}
+.cta-band p{font-size:1.05rem;opacity:.88;max-width:480px;margin:0 auto 2.4rem;line-height:1.6}
+.btn-cta{
+  display:inline-flex;align-items:center;gap:.7rem;
+  background:#fff;color:var(--p);text-decoration:none;
+  padding:1.1rem 2.6rem;border-radius:3px;font-weight:900;font-size:1.1rem;
+  text-transform:uppercase;letter-spacing:.05em;
+  box-shadow:0 4px 20px rgba(0,0,0,.2);
+  transition:transform .25s,box-shadow .25s;
+}
+.btn-cta:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,0,0,.3)}
+
+/* FOOTER */
+footer{background:#050505;padding:2.2rem 2rem;text-align:center;border-top:1px solid var(--dim)}
+footer p{color:var(--muted);font-size:.82rem}
+footer a{color:var(--p);text-decoration:none}
+
+/* ANIMATE */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.hero-wrap>*{animation:fadeUp .55s ease both}
+.hero-wrap>*:nth-child(1){animation-delay:.1s}
+.hero-wrap>*:nth-child(2){animation-delay:.2s}
+.hero-wrap>*:nth-child(3){animation-delay:.3s}
+.hero-wrap>*:nth-child(4){animation-delay:.4s}
+.hero-wrap>*:nth-child(5){animation-delay:.5s}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .about-inner{grid-template-columns:1fr;gap:2.5rem}
+  .ctas{flex-direction:column;align-items:flex-start}
+  .hero-stripe{display:none}
+}
+@media(max-width:480px){
+  .svc-grid{grid-template-columns:1fr}
+  .t-grid{grid-template-columns:1fr}
+  nav{padding:.75rem 1rem}
+}
+/* ── MAP ── */
+.map-section{background:#050505}
+#map{width:100%;height:400px;display:block}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nbrand" href="#"><span>Synergy Towing &amp; Transpo</span></a>
+  <a class="nphone" href="tel:2675707719"><i class="fas fa-phone"></i>(267) 570-7719</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-stripe"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-wrap">
+    <div class="badge"><i class="fas fa-truck-pickup"></i>&nbsp;Towing &mdash; Philadelphia, PA</div>
+    <h1>Synergy Towing &amp; Transport<em>Towing</em></h1>
+    <p class="hero-sub">Call (267) 570-7719 for 24-hour towing and roadside services in Philadelphia, PA. We provide flatbed towing, motorcycle towing, lockouts, jump starts, and more 24/7.</p>
+    <div class="ctas">
+      <a class="btn-main" href="tel:2675707719"><i class="fas fa-phone"></i>Call Now: (267) 570-7719</a>
+      <a class="btn-ghost" href="#services"><i class="fas fa-arrow-right"></i>Services</a>
+    </div>
+    <div class="hero-specs">
+      <div><div class="spec-val">24/7</div><div class="spec-lbl">Available</div></div>
+      <div><div class="spec-val">Fast</div><div class="spec-lbl">Response</div></div>
+      <div><div class="spec-val">FREE</div><div class="spec-lbl">Estimates</div></div>
+      <div><div class="spec-val">Local</div><div class="spec-lbl">Experts</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="sec-hdr">
+    <span class="sec-label">Our Services</span>
+    <h2>What We Do</h2>
+    <p>Professional towing services for drivers across Philadelphia and surrounding areas.</p>
+  </div>
+  <div class="svc-grid">
+      <div class="scard">
+        <div class="scard-stripe"></div>
+        <div class="scard-ico"><i class="fas fa-car"></i></div>
+        <h3>Emergency Towing</h3>
+      </div>
+      <div class="scard">
+        <div class="scard-stripe"></div>
+        <div class="scard-ico"><i class="fas fa-wrench"></i></div>
+        <h3>Light-Duty Towing</h3>
+      </div>
+      <div class="scard">
+        <div class="scard-stripe"></div>
+        <div class="scard-ico"><i class="fas fa-tools"></i></div>
+        <h3>Medium-Duty Towing</h3>
+      </div>
+      <div class="scard">
+        <div class="scard-stripe"></div>
+        <div class="scard-ico"><i class="fas fa-cog"></i></div>
+        <h3>Flatbed Towing</h3>
+      </div>
+      <div class="scard">
+        <div class="scard-stripe"></div>
+        <div class="scard-ico"><i class="fas fa-truck"></i></div>
+        <h3>Motorcycle Towing</h3>
+      </div>
+      <div class="scard">
+        <div class="scard-stripe"></div>
+        <div class="scard-ico"><i class="fas fa-star"></i></div>
+        <h3>Roadside Assistance</h3>
+      </div></div>
+</section>
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="about-inner">
+    <div class="about-copy">
+      <span class="sec-label">About Us</span>
+      <h2>Built to Get You Moving</h2>
+      <p>With our team of experienced and trained professionals, Synergy Towing &amp; Transport is happy to offer a wide range of services. Our round-the-clock services include, but are not limited to, emergency towing, motorcycle towing, jump starts, lockouts, and roadside assistance. Call (267) 570-7719 for fast, friendly, and reliable service.</p>
+      <div class="feature-list">
+        <div class="fitem"><i class="fas fa-check-circle"></i>Licensed &amp; Insured</div>
+        <div class="fitem"><i class="fas fa-bolt"></i>Fast, Reliable Response</div>
+        <div class="fitem"><i class="fas fa-map-marker-alt"></i>Serving Philadelphia &amp; Surrounding Areas</div>
+        <div class="fitem"><i class="fas fa-undo-alt"></i>Satisfaction Guaranteed</div>
+      </div>
+    </div>
+    <div class="about-panel">
+      <i class="fas fa-truck-pickup big-ico"></i>
+      <h3>Towing Experts</h3>
+      <p>Experienced, efficient towing professionals you can trust in Philadelphia, PA.</p>
+      <a class="btn-main" href="tel:2675707719">
+        <i class="fas fa-phone"></i>(267) 570-7719
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="reviews">
+  <div class="sec-hdr">
+    <span class="sec-label">Reviews</span>
+    <h2>From Our Customers</h2>
+    <p>Real feedback from drivers who chose Synergy Towing &amp; Transport in Philadelphia.</p>
+  </div>
+  <div class="t-grid">
+      <div class="tcard">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>&ldquo;Amazing service from start to finish. Professional, on time, and did an outstanding job. I couldn&#39;t be happier with the results and will definitely use them again.&rdquo;</p>
+        <span class="rname">&#8212; Verified Customer</span>
+      </div>
+      <div class="tcard">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>&ldquo;Best decision I made was calling this company. Fair pricing, great communication, and the quality of work exceeded my expectations. Highly recommend!&rdquo;</p>
+        <span class="rname">&#8212; Verified Customer</span>
+      </div>
+      <div class="tcard">
+        <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        <p>&ldquo;Outstanding crew — knowledgeable, friendly, and they left everything spotless. Completed the job exactly as promised. Five stars without hesitation.&rdquo;</p>
+        <span class="rname">&#8212; Verified Customer</span>
+      </div></div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band" id="contact">
+  <div class="cta-inner">
+    <h2>Need Help? Call Now.</h2>
+    <p>Synergy Towing &amp; Transport — fast, dependable towing in Philadelphia, PA. Available 24/7.</p>
+    <a class="btn-cta" href="tel:2675707719"><i class="fas fa-phone-alt"></i>Call (267) 570-7719</a>
+  </div>
+</section>
+
+<!-- MAP -->
+<section class="map-section">
+  <div id="map" aria-label="Map showing Synergy Towing &amp; Transport in Philadelphia, PA"></div>
+</section>
+
+<footer>
+  <p>&copy; 2025 Synergy Towing &amp; Transport &nbsp;&bull;&nbsp; Towing in Philadelphia, PA &nbsp;&bull;&nbsp; <a href="tel:2675707719">(267) 570-7719</a></p>
+</footer>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  var geo='15 years of experience providing reliable and efficient towing and roadside assistance services to the Tri-St';
+  if(!geo)return;
+  var q=encodeURIComponent(geo+', USA');
+  fetch('https://nominatim.openstreetmap.org/search?q='+q+'&format=json&limit=1')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(!d||!d.length)return;
+      var lat=parseFloat(d[0].lat),lng=parseFloat(d[0].lon);
+      var map=L.map('map',{scrollWheelZoom:false}).setView([lat,lng],13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+        attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom:19
+      }).addTo(map);
+      L.marker([lat,lng]).addTo(map).bindPopup('Synergy Towing &amp; Transport').openPopup();
+    }).catch(function(){});
+})();
+</script>
+
+</body>
+</html>
